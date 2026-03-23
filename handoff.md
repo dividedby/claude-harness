@@ -4,4 +4,4 @@
 ## In Progress: [~] Task — done: X, remaining: Y
 ## Decisions: [what] — [why]
 ## Next: 1. [exact task with file paths]
-## Resume: Read CLAUDE.md, handoff.md, TODO.md. Run /mem-search for this project. Continue with: [instruction]
+## Resume: Read CLAUDE.md, handoff.md, TODO.md, .research/README.md. Run /mem-search for this project. Continue with: [instruction]
