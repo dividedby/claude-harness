@@ -7,7 +7,7 @@ Spend prompts on orchestration, not grunt work.
 ## Token Discipline
 - Avoid reading large files blindly. Prefer line ranges, grep, or Serena.
 - RTK compresses CLI output automatically. Trust it.
-- Concise responses. Report only failures from tests.
+- Concise responses. Use /test to run tests — report only failures.
 - .claudeignore keeps irrelevant files out of context. Update it when needed.
 
 ## Context Rules
@@ -30,19 +30,34 @@ Spend prompts on orchestration, not grunt work.
 - Keep one orchestrator responsible per change wave: either Agent Teams or Octopus, not both at once.
 
 ## Handoff Protocol
+Use /handoff to automate this. It will:
 1. Update handoff.md + TODO.md
 2. Commit work in progress
 3. Tell user: "Run /clear, then: [exact instruction]"
 
 ## Commands
-- When you notice a recurring workflow, create a slash command in .claude/commands/
-- Use $ARGUMENTS for dynamic input
-- Check existing commands before starting — /test, /handoff, /review, /research, /mem-search, /docs-maintain, /orchestrate
+Use these before doing things manually:
+- /test — run tests (report failures only)
+- /review [file] — code review with severity levels
+- /research [topic] — investigate and save to .research/
+- /handoff — prepare session handoff
+- /mem-search [query] — search Claude-Mem for prior work
+- /docs-maintain — update ROUTE_REFERENCE.md and SYSTEM_DOC.md
+- /orchestrate [task] — decide subagents vs teams vs octopus
+
+When you notice a recurring workflow, create a new slash command in .claude/commands/.
+Use $ARGUMENTS for dynamic input.
 
 ## Quality
-- Run tests after changes. Fix failures before marking done.
+- Run /test after changes. Fix failures before marking done.
+- Use /review on changed files before committing.
 - git add specific files. Conventional commits.
 
 ## Research
-- Save research to .research/ with dated filenames
-- Check .research/ and Claude-Mem before starting any new investigation
+- Use /research [topic] to investigate and auto-save to .research/
+- Check .research/README.md and Claude-Mem before starting any new investigation
+
+## Self-Maintaining Docs
+- If ROUTE_REFERENCE.md and SYSTEM_DOC.md exist, read them before changing features.
+- After significant changes, run /docs-maintain to keep them in sync.
+- If they don't exist yet, suggest creating them for web apps and API projects.
