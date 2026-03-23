@@ -19,11 +19,16 @@ THIRD: Search memory:
 - Use Claude-Mem's search tools to find prior sessions related to this repo.
 - Summarize any relevant past work, decisions, or known issues.
 
-FOURTH: Report what you found and suggest first tasks.
+FOURTH: Health check:
+- If a test suite exists, run /test to verify the codebase is healthy.
+
+FIFTH: Report what you found and suggest first tasks.
 
 RULES:
 - One task at a time. Complete → verify → next.
+- Use the harness commands: /test, /review, /research, /handoff, /mem-search, /docs-maintain, /orchestrate.
 - Use subagents for focused parallel work.
 - Use agent teams for complex multi-component tasks.
-- At ~50% context: STOP. Handoff. Tell me what to /clear to.
-- Save research to .research/ and important observations to Claude-Mem.
+- At ~50% context: STOP. Run /handoff. Tell me what to /clear to.
+- Use /research [topic] to save findings to .research/.
+- Store important observations in Claude-Mem.
