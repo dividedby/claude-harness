@@ -25,8 +25,14 @@ Policy:
   - The task spans multiple components of THIS repo (e.g., backend, frontend, DB, tests, docs)
   - Parallel work and coordination between roles would clearly help
   - The work is substantial and will last multiple steps/messages
-- When recommending a Team:
+- When creating Agent Teams:
   - Name each teammate and its scope (e.g., API, DB, UI, Tests)
+  - Keep 5–6 tasks per teammate maximum; fewer is better
+  - Start with read-only tasks (research, review) before write tasks
+  - Run /mem-search first — embed relevant findings, architectural decisions, and known
+    constraints directly into each teammate's task description. Teammates have NO session history.
+  - Require plans from each teammate before implementation begins
+  - Guide the lead's approval criteria upfront
   - Explain why a team is justified vs subagents
   - Ask for explicit confirmation before creating the team
 
