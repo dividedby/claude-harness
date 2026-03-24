@@ -16,6 +16,15 @@ Spend prompts on orchestration, not grunt work.
 - Use subagents or agent teams for parallel work.
 - Prefer Claude-Mem memory search over re-reading files or redoing research.
 
+## Compact Instructions
+When compressing context, preserve in priority order:
+1. Architecture decisions (NEVER summarize — preserve verbatim)
+2. Modified files and their key changes
+3. Current verification status (pass/fail commands)
+4. Open TODOs, risks, and rollback notes
+5. Session decisions made via /orchestrate
+6. Tool outputs (can truncate — keep pass/fail summary only)
+
 ## Memory (Claude-Mem)
 - Assume Claude-Mem captures tool usage and summaries locally.
 - Before heavy research or refactors, search memory using /mem-search.
@@ -28,6 +37,7 @@ Spend prompts on orchestration, not grunt work.
 - Use /orchestrate when in doubt — it recommends Direct, Subagents, Agent Teams, or Octopus.
 - Use Claude Octopus only when you explicitly confirm a multi-AI or multi-repo workflow.
 - Keep one orchestrator responsible per change wave: either Agent Teams or Octopus, not both at once.
+- Agent Teams do NOT inherit session history. Embed Claude-Mem results into task descriptions before spawning.
 
 ## Handoff Protocol
 Use /handoff to automate this. It will:
@@ -35,29 +45,28 @@ Use /handoff to automate this. It will:
 2. Commit work in progress
 3. Tell user: "Run /clear, then: [exact instruction]"
 
+The PreCompact hook will also trigger this automatically before context compaction.
+
+## Verification
+- Run /test after any code change. Fix failures before marking done.
+- For API changes, run /review on changed endpoints.
+- Definition of done: all tests pass, lint clean, no leftover TODOs.
+
 ## Commands
 Use these before doing things manually:
 - /test — run tests (report failures only)
 - /review [file] — code review with severity levels
 - /research [topic] — investigate and save to .research/
 - /handoff — prepare session handoff
+- /compact-save — structured handoff before manual /compact
 - /mem-search [query] — search Claude-Mem for prior work
 - /docs-maintain — update ROUTE_REFERENCE.md and SYSTEM_DOC.md
 - /orchestrate [task] — decide subagents vs teams vs octopus
+- /health — validate harness configuration
 
 When you notice a recurring workflow, create a new slash command in .claude/commands/.
 Use $ARGUMENTS for dynamic input.
 
-## Quality
-- Run /test after changes. Fix failures before marking done.
-- Use /review on changed files before committing.
-- git add specific files. Conventional commits.
-
-## Research
-- Use /research [topic] to investigate and auto-save to .research/
-- Check .research/README.md and Claude-Mem before starting any new investigation
-
-## Self-Maintaining Docs
-- If ROUTE_REFERENCE.md and SYSTEM_DOC.md exist, read them before changing features.
-- After significant changes, run /docs-maintain to keep them in sync.
-- If they don't exist yet, suggest creating them for web apps and API projects.
+## Rules
+- Path-specific rules live in .claude/rules/. Keep CLAUDE.md under ~130 lines.
+- When project conventions grow, move domain rules to .claude/rules/[domain].md.
