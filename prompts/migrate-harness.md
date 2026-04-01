@@ -1,7 +1,7 @@
 # Harness v3 Migration Prompt
-# Paste this into Claude Code at the root of any project to migrate to Harness v3.
+# Paste this into Claude Code at the root of any project to migrate to the new lean Harness.
 
-I want you to migrate this existing project to my new lean Harness v3.
+I want you to migrate this existing project to my new lean Harness.
 
 Follow these instructions exactly and work in a careful, staged way.
 
