@@ -1,0 +1,27 @@
+name: PR Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Review this PR. Read CLAUDE.md for project rules.
+            Check: correctness, security, unnecessary complexity, rule violations.
+            Post findings as inline review comments. Direct and specific. Skip praise.
+            End with: APPROVE or REQUEST CHANGES.
+          claude_args: "--max-turns 5"

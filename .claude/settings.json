@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)", "Bash(gh:*)", "Bash(npm:*)", "Bash(npx:*)",
+      "Bash(node:*)", "Bash(docker:*)", "Bash(curl:*)", "Bash(cat:*)",
+      "Bash(ls:*)", "Bash(find:*)", "Bash(grep:*)", "Bash(mkdir:*)",
+      "Bash(cp:*)", "Bash(mv:*)", "Bash(rm:*)", "Bash(echo:*)",
+      "Bash(sed:*)", "Bash(awk:*)", "Bash(jq:*)", "Bash(tar:*)",
+      "Bash(npx playwright:*)"
+    ],
+    "deny": ["Bash(sudo rm -rf /)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": ".claude/hooks/sensitive-guard.sh" }] },
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": ".claude/hooks/loop-guard.sh" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": ".claude/hooks/skill-tracker.sh" }] }
+    ],
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": ".claude/hooks/session-start.sh" }] }
+    ],
+    "SessionStop": [
+      { "hooks": [{ "type": "command", "command": ".claude/hooks/session-stop.sh" }] }
+    ]
+  }
+}

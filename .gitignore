@@ -1,0 +1,9 @@
+CLAUDE.local.md
+.env
+.env.*
+*.local
+node_modules/
+.DS_Store
+.claude/session-log.txt
+.claude/.session-started
+.claude/.cmd-history
