@@ -1,0 +1,6 @@
+{
+  "_comment": "Template for ~/.claude/settings.json - user-level, all projects.",
+  "permissions": {
+    "allow": ["Bash(gh:*)", "Bash(git:*)", "Bash(npm:*)", "Bash(npx:*)", "Bash(curl:*)"]
+  }
+}

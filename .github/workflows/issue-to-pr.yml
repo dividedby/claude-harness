@@ -1,0 +1,27 @@
+name: Issue to PR
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  implement:
+    if: contains(github.event.label.name, 'claude')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Implement the feature or fix in this issue.
+            Read CLAUDE.md and docs/project.md first.
+            Minimal targeted changes only.
+            Apply /project:done check criteria before finishing.
+          claude_args: "--max-turns 20"
