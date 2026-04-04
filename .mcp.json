@@ -1,4 +1,0 @@
-{
-  "_philosophy": "Zero MCPs locally. gh CLI for GitHub. Playwright via npx. curl for Cloudflare API. Perplexity runs only inside GitHub Actions cron — no session overhead.",
-  "mcpServers": {}
-}

@@ -1,7 +1,0 @@
-{
-  "_comment": "Template for ~/.claude/settings.json — applies to all projects on this machine.",
-  "_philosophy": "Zero MCPs globally. Use gh CLI for GitHub. Use npx for one-off tools.",
-  "permissions": {
-    "allow": ["Bash(gh:*)", "Bash(git:*)", "Bash(npm:*)", "Bash(npx:*)", "Bash(curl:*)"]
-  }
-}
