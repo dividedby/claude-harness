@@ -1,0 +1,22 @@
+name: Claude Code Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this PR using the adversarial-reviewer agent. Focus on: security
+            vulnerabilities, correctness bugs, missing error handling, test gaps.
+            Post findings as review comments. End with APPROVE/REQUEST_CHANGES/BLOCK.
+          claude_args: "--max-turns 8 --model claude-sonnet-4-6"

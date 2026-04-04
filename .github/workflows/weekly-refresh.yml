@@ -1,0 +1,90 @@
+name: Harness Weekly Refresh
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Specific topic to research (optional)'
+        required: false
+        default: ''
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for recent refresh PR
+        id: check-recent
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RECENT=$(gh pr list --search "harness/weekly-refresh in:title is:merged" \
+            --json mergedAt --jq '.[0].mergedAt // ""')
+          if [ -n "$RECENT" ]; then
+            DAYS=$(( ($(date +%s) - $(date -d "$RECENT" +%s 2>/dev/null || echo 0)) / 86400 ))
+            [ "$DAYS" -lt 7 ] && echo "skip=true" >> "$GITHUB_OUTPUT" && exit 0
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Research Claude Code changes
+        if: steps.check-recent.outputs.skip != 'true'
+        id: research
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+        run: |
+          TOPIC="${{ github.event.inputs.topic }}"
+          [ -z "$TOPIC" ] && TOPIC="Claude Code harness best practices $(date +%B\ %Y): new hooks, plugin system changes, CLAUDE.md optimization, token reduction patterns"
+          RESULT=$(curl -s https://api.perplexity.ai/chat/completions \
+            -H "Authorization: Bearer $PERPLEXITY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"model\":\"llama-3.1-sonar-large-128k-online\",\"messages\":[{\"role\":\"user\",\"content\":\"$TOPIC. Return ONLY material changes relevant to harness config. Format: CHANGES (bullets) or NO_CHANGE. Max 500 words.\"}],\"max_tokens\":600}" \
+            | jq -r '.choices[0].message.content // "API_ERROR"')
+          echo "result<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RESULT" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "$RESULT" | grep -qiE "NO_CHANGE|nothing changed|no material" \
+            && echo "has_changes=false" >> "$GITHUB_OUTPUT" \
+            || echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create refresh PR
+        if: steps.check-recent.outputs.skip != 'true' && steps.research.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "harness/weekly-refresh-$DATE"
+          mkdir -p docs
+          cat > docs/weekly-refresh-staging.md << STAGING
+# Weekly Refresh — $DATE
+> Auto-generated. Human review required. Delete this file after applying changes.
+
+## Findings
+${{ steps.research.outputs.result }}
+
+## Review Checklist
+- [ ] CLAUDE.md — new best practices to adopt?
+- [ ] Hook scripts — new events to handle?
+- [ ] Skills — content or descriptions to update?
+- [ ] Settings — new settings keys to leverage?
+
+## Apply
+After review: \`/self-improve <specific finding>\`
+STAGING
+          git add docs/weekly-refresh-staging.md
+          git commit -m "chore: weekly harness refresh staging — $DATE"
+          gh pr create \
+            --title "Harness weekly refresh — $DATE" \
+            --body "Review \`docs/weekly-refresh-staging.md\`. **Do not auto-merge.**" \
+            --draft --label "harness,automated" 2>/dev/null || \
+          gh pr create \
+            --title "Harness weekly refresh — $DATE" \
+            --body "Review docs/weekly-refresh-staging.md. Do not auto-merge." \
+            --draft

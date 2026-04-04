@@ -1,0 +1,16 @@
+{
+  "name": "claude-harness",
+  "version": "2.0.0",
+  "description": "Lean, automatic, self-improving Claude Code harness",
+  "author": { "name": "dividedby", "url": "https://github.com/dividedby/claude-harness" },
+  "repository": "https://github.com/dividedby/claude-harness",
+  "license": "MIT",
+  "keywords": ["harness", "workflow", "review", "bootstrap", "self-improving"],
+  "hooks": "./hooks/hooks.json",
+  "userConfig": {
+    "perplexity_api_key": {
+      "description": "Perplexity API key for research and weekly refresh (optional)",
+      "sensitive": true
+    }
+  }
+}
